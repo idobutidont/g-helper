@@ -1,4 +1,4 @@
-﻿using GHelper.UI;
+using GHelper.UI;
 
 namespace GHelper
 {
@@ -419,7 +419,7 @@ namespace GHelper
             sliderBattery.Location = new Point(20, 60);
             sliderBattery.Margin = new Padding(4);
             sliderBattery.Max = 100;
-            sliderBattery.Min = 40;
+            sliderBattery.Min = 20;
             sliderBattery.Name = "sliderBattery";
             sliderBattery.Size = new Size(707, 40);
             sliderBattery.Step = 5;

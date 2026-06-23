@@ -1,4 +1,4 @@
-﻿using GHelper.Helpers;
+using GHelper.Helpers;
 using Microsoft.Win32;
 using System.Diagnostics;
 
@@ -66,13 +66,13 @@ namespace GHelper.Battery
         {
             int limit = setLimit;
             if (limit < 0) limit = AppConfig.Get("charge_limit");
-            if (limit < 40 || limit > 100) return;
+            if (limit < 20 || limit > 100) return;
 
             if (AppConfig.IsChargeLimit6080())
             {
                 if (limit > 85) limit = 100;
                 else if (limit >= 80) limit = 80;
-                else if (limit < 60) limit = 60;
+                else if (limit < 20) limit = 20;
             }
 
             if (setLimit > 0) SetAsusChargeLimit(limit);

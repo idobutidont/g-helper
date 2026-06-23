@@ -1,4 +1,4 @@
-﻿using GHelper.Ally;
+using GHelper.Ally;
 using GHelper.AnimeMatrix;
 using GHelper.AutoUpdate;
 using GHelper.Battery;
@@ -242,7 +242,7 @@ namespace GHelper
             sliderBattery.MouseUp += SliderBattery_MouseUp;
             sliderBattery.KeyUp += SliderBattery_KeyUp;
             sliderBattery.ValueChanged += SliderBattery_ValueChanged;
-            if (AppConfig.IsChargeLimit6080()) sliderBattery.supportedValues = new() { 60, 65, 70, 75, 80, 100 };
+            if (AppConfig.IsChargeLimit6080()) sliderBattery.supportedValues = new() { 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 100 };
 
             sensorTimer = new System.Timers.Timer(AppConfig.Get("sensor_timer", 1000));
             sensorTimer.Elapsed += OnTimedEvent;
