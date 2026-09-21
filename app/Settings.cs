@@ -9,6 +9,7 @@ using GHelper.Helpers;
 using GHelper.Input;
 using GHelper.Mode;
 using GHelper.Peripherals;
+using GHelper.Peripherals.Headset;
 using GHelper.Peripherals.Keyboard;
 using GHelper.Peripherals.Mouse;
 using GHelper.Properties;
@@ -31,6 +32,7 @@ namespace GHelper
 
         AsusMouseSettings? mouseSettings;
         AsusKeyboardSettings? keyboardSettings;
+        AsusHeadsetSettings? headsetSettings;
 
         public AniMatrixControl matrixControl;
 
@@ -57,7 +59,6 @@ namespace GHelper
         bool batteryFullMouseOver = false;
 
         bool sliderGammaIgnore = false;
-        bool activateCheck = false;
 
         public SettingsForm()
         {
@@ -133,7 +134,6 @@ namespace GHelper
 
             FormClosing += SettingsForm_FormClosing;
             Deactivate += SettingsForm_LostFocus;
-            Activated += SettingsForm_Focused;
 
             buttonSilent.BorderColor = colorEco;
             buttonBalanced.BorderColor = colorStandard;
@@ -315,8 +315,7 @@ namespace GHelper
 
         private void ButtonAmdOled_Click(object? sender, EventArgs e)
         {
-            AmdDisplay.RunAdrenaline();
-            activateCheck = true;
+            if (VisualControl.DisableOledPowerOptimization()) VisualiseAmdOled(false);
         }
 
         private void LabelBattery_Click(object? sender, EventArgs e)
@@ -644,14 +643,6 @@ namespace GHelper
             buttonAutoTDP.Activated = status;
         }
 
-        private void SettingsForm_Focused(object? sender, EventArgs e)
-        {
-            if (activateCheck)
-            {
-                buttonAmdOled.Visible = AmdDisplay.IsOledPowerOptimization();
-                activateCheck = false;
-            }
-        }
         private void SettingsForm_LostFocus(object? sender, EventArgs e)
         {
             lastLostFocus = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -1560,6 +1551,7 @@ namespace GHelper
             if (overlayForm != null && overlayForm.Text != "") overlayForm.Close();
             if (mouseSettings != null && mouseSettings.Text != "") mouseSettings.Close();
             if (keyboardSettings != null && keyboardSettings.Text != "") keyboardSettings.Close();
+            if (headsetSettings != null && headsetSettings.Text != "") headsetSettings.Close();
             MemoryHelper.TrimAfter();
         }
 
@@ -1571,6 +1563,7 @@ namespace GHelper
             this.Activate();
             this.TopMost = true;
             this.TopMost = AppConfig.Is("topmost");
+            if (TopMost) User32.SetWindowPos(Handle, -1, 0, 0, 0, 0, 0x0001 | 0x0002 | 0x0010);
         }
 
         public DialogResult ShowMessage(string text, string title = "", MessageBoxButtons buttons = MessageBoxButtons.OK)
@@ -2086,6 +2079,12 @@ namespace GHelper
             labelKeyboard.Text = Properties.Strings.LaptopKeyboard + (PeripheralsProvider.IsAuraSync ? " +" : "");
         }
 
+        private static List<IPeripheral> VisiblePeripherals()
+        {
+            List<IPeripheral> lp = PeripheralsProvider.AllPeripherals();
+            return lp.Count > 3 ? lp.OrderByDescending(p => p.IsDeviceReady).ToList() : lp;
+        }
+
         public void VisualizePeripherals()
         {
             if (!PeripheralsProvider.IsAnyPeripheralConnect())
@@ -2096,8 +2095,7 @@ namespace GHelper
 
             Button[] buttons = new Button[] { buttonPeripheral1, buttonPeripheral2, buttonPeripheral3 };
 
-            //we only support 4 devces for now. Who has more than 4 mice connected to the same PC anyways....
-            List<IPeripheral> lp = PeripheralsProvider.AllPeripherals();
+            List<IPeripheral> lp = VisiblePeripherals();
 
             for (int i = 0; i < lp.Count && i < buttons.Length; ++i)
             {
@@ -2122,6 +2120,7 @@ namespace GHelper
                 {
                     PeripheralType.Mouse => Properties.Resources.icons8_maus_48,
                     PeripheralType.Keyboard => Properties.Resources.icons8_keyboard_48,
+                    PeripheralType.Headset => Properties.Resources.icons8_headphones_48,
                     _ => null,
                 };
 
@@ -2166,7 +2165,7 @@ namespace GHelper
             int index = 0;
             if (sender == buttonPeripheral2) index = 1;
             if (sender == buttonPeripheral3) index = 2;
-            IPeripheral iph = PeripheralsProvider.AllPeripherals().ElementAt(index);
+            IPeripheral iph = VisiblePeripherals().ElementAt(index);
 
 
             if (iph is null)
@@ -2195,11 +2194,17 @@ namespace GHelper
                 return;
             }
 
+            if (headsetSettings is not null)
+            {
+                headsetSettings.Close();
+                return;
+            }
+
             int index = 0;
             if (sender == buttonPeripheral2) index = 1;
             if (sender == buttonPeripheral3) index = 2;
 
-            IPeripheral iph = PeripheralsProvider.AllPeripherals().ElementAt(index);
+            IPeripheral iph = VisiblePeripherals().ElementAt(index);
 
             if (iph is null)
             {
@@ -2239,6 +2244,37 @@ namespace GHelper
                 }
                 ShowKeyboardSettings(kb);
             }
+
+            if (iph.DeviceType() == PeripheralType.Headset)
+            {
+                AsusHeadset? hs = iph as AsusHeadset;
+                if (hs is null || !hs.IsDeviceReady)
+                {
+                    return;
+                }
+                headsetSettings = new AsusHeadsetSettings(hs);
+                headsetSettings.TopMost = AppConfig.Is("topmost");
+                headsetSettings.FormClosed += HeadsetSettings_FormClosed;
+                headsetSettings.Disposed += HeadsetSettings_Disposed;
+                if (!headsetSettings.IsDisposed)
+                {
+                    headsetSettings.Show();
+                }
+                else
+                {
+                    headsetSettings = null;
+                }
+            }
+        }
+
+        private void HeadsetSettings_Disposed(object? sender, EventArgs e)
+        {
+            headsetSettings = null;
+        }
+
+        private void HeadsetSettings_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            headsetSettings = null;
         }
 
         private void ShowKeyboardSettings(AsusKeyboard kb)
