@@ -112,6 +112,8 @@ A built-in in-game overlay (OSD) that shows live **FPS, CPU / GPU temperatures, 
 - ``Ctrl + Shift + Alt + Wheel`` - Resize overlay
 - ``Ctrl + Shift + Alt + Wheel Click`` - Reset overlay size
 
+All detailed settings can be configured directly via the `Overlay` button
+
 <img width="1690" alt="Metrics Overlay" src="https://github.com/user-attachments/assets/0752a704-e9a7-4e27-8587-39967f625fae" />
 <img width="3840" alt="Metrics Overlay in a game" src="https://github.com/user-attachments/assets/8b063f80-d508-41e0-9978-154bc936d451" />
 
@@ -168,6 +170,7 @@ Huge thanks to [@IceStormNG](https://github.com/IceStormNG) 👑 for contributio
 <details>
 <summary><a href="https://github.com/seerge/g-helper/discussions/5710">Currently supported models</a> (click to expand)</summary>
 
+- ASUS TX 98
 - ROG Azoth
 - ROG Azoth Extreme
 - ROG Azoth Extreme SE
@@ -194,6 +197,7 @@ Huge thanks to [@IceStormNG](https://github.com/IceStormNG) 👑 for contributio
 - TUF Gaming K1
 - TUF Gaming K3
 - TUF Gaming K3 Gen II
+- TUF Gaming K3 Gen II Miku Edition
 
 </details>
 
@@ -238,6 +242,7 @@ Battery level, lighting, equalizer presets, sidetone, microphone and AI noise ca
 - ``Ctrl + Shift + Alt + F18`` - Turbo
 - ``Ctrl + Shift + Alt + F19`` - Custom 1 (if exists)
 - ``Ctrl + Shift + Alt + F20`` - Custom 2 (if exists)
+- ``Ctrl + Shift + Alt + F21`` - Toggle XG Mobile
 - [Custom keybindings / hotkeys](https://github.com/seerge/g-helper/wiki/Power-user-settings#custom-hotkey-actions)
 
 ### 🎮ROG Ally Bindings

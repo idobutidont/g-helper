@@ -804,6 +804,12 @@ namespace GHelper
                 panelBatteryState.Visible = false;
             }
 
+            if (!mouse.HasProfiles())
+            {
+                panelProfiles.Visible = false;
+                panelBottomButtons.Visible = false;
+            }
+
             if (mouse.HasAutoPowerOff())
             {
                 comboBoxAutoPowerOff.Items.AddRange(new string[]{
@@ -1086,14 +1092,14 @@ namespace GHelper
                 comboBoxPollingRate.SelectedIndex = idx;
             }
 
-            if (mouse.HasAngleSnapping())
-            {
-                checkBoxAngleSnapping.Checked = mouse.AngleSnapping;
-            }
-
             if (mouse.HasAngleTuning())
             {
                 sliderAngleAdjustment.Value = mouse.AngleAdjustmentDegrees;
+            }
+
+            if (mouse.HasAngleSnapping())
+            {
+                checkBoxAngleSnapping.Checked = mouse.AngleSnapping;
             }
 
             if (mouse.HasAutoPowerOff())
